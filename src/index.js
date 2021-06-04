@@ -1,17 +1,8 @@
-// <⚠️ DONT DELETE THIS ⚠️>
-// <⚠️ /DONT DELETE THIS ⚠️>
-
-const h1 = document.querySelector("h1");
-
-function handleResize() {
-  const width = window.outerWidth;
-  if (width > 1200) {
-    h1.style.backgroundColor = "orange";
-  } else if (850 <= width && width <= 1200) {
-    h1.style.backgroundColor = "darkviolet";
-  } else {
-    h1.style.backgroundColor = "mediumblue";
-  }
+// You're gonna need this
+function getTime() {
+  // Don't delete this.
+  const xmasDay = new Date("2021-12-24:00:00:00+0900");
 }
 
-window.addEventListener("resize", handleResize);
+function init() {}
+init();
