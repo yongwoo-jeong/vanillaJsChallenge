@@ -1,13 +1,57 @@
 const tasksForm = document.querySelector(".tasksForm"),
   tasksInput = tasksForm.querySelector("input"),
-  taskList = document.querySelector(".pending");
+  taskList = document.querySelector(".pending"),
+  doneList = document.querySelector(".finished");
 
 const PENDING_LS = "PENDING";
+const FINISHED_LS = "FINISHED";
 
-const taskArray = [];
+let taskArray = [];
+let finishedArray = [];
 
-function deleteTask(event) {}
+function deleteTask(event) {
+  const btn = event.target;
+  const li = btn.parentNode;
+  taskList.removeChild(li);
+  const cleanTaskArray = taskArray.filter(function (task) {
+    return task.id !== parseInt(li.id);
+  });
+  taskArray = cleanTaskArray;
+  saveTasks();
+}
 
+function paintFinished(text) {
+  const li = document.createElement("li");
+  const delBtn = document.createElement("button");
+  delBtn.innerText = "✖";
+  delBtn.addEventListener("click", deleteTask);
+  const doneBtn = document.createElement("button");
+  doneBtn.innerText = "✔";
+  doneBtn.addEventListener("click", doneTask);
+  const span = document.createElement("span");
+  const newId = taskArray.length + 1;
+  span.innerText = text;
+  li.appendChild(span);
+  li.appendChild(delBtn);
+  li.appendChild(doneBtn);
+  li.id = newId;
+  doneList.appendChild(li);
+  const taskObj = {
+    text: text,
+    id: newId,
+  };
+  finishedArray.push(taskObj);
+  saveTasks();
+}
+
+function doneTask(event) {
+  deleteTask(event);
+  paintFinished();
+}
+
+function saveDones() {
+  localStorage.setItem(FINISHED_LS, JSON.stringify(taskArray));
+}
 function saveTasks() {
   localStorage.setItem(PENDING_LS, JSON.stringify(taskArray));
 }
@@ -19,6 +63,7 @@ function paintTasks(text) {
   delBtn.addEventListener("click", deleteTask);
   const doneBtn = document.createElement("button");
   doneBtn.innerText = "✔";
+  doneBtn.addEventListener("click", doneTask);
   const span = document.createElement("span");
   const newId = taskArray.length + 1;
   span.innerText = text;
