@@ -32,6 +32,16 @@ function deleteTaskV2(event) {
   saveDones();
 }
 
+function beforeTask(event) {
+  const btn = event.target;
+  const nodeLi = btn.parentNode;
+  const text = nodeLi.firstChild;
+  const textString = text.innerText;
+  const getId = nodeLi.id;
+  paintPending(textString, getId);
+  deleteTaskV2(event);
+}
+
 function paintFinished(bringText, getId) {
   const li = document.createElement("li");
   const delBtn = document.createElement("button");
@@ -39,8 +49,8 @@ function paintFinished(bringText, getId) {
   delBtn.addEventListener("click", deleteTaskV2);
   const doneBtn = document.createElement("button");
   doneBtn.innerHTML = "⏮";
-  // doneBtn.addEventListener("click", doneTask);
-  const newId = getId;
+  doneBtn.addEventListener("click", beforeTask);
+  const newId = Number(getId);
   const span = document.createElement("span");
   span.innerText = bringText;
   li.appendChild(span);
@@ -83,9 +93,7 @@ function paintPending(text) {
   doneBtn.innerText = "✔";
   doneBtn.addEventListener("click", doneTask);
   const span = document.createElement("span");
-
-  // const newId = Math.floor(Math.random() * 10000000);
-  const newId = taskArray.length + 1;
+  const newId = Math.floor(Math.random() * 10000000);
   span.innerText = text;
   li.appendChild(span);
   li.appendChild(delBtn);
@@ -97,6 +105,8 @@ function paintPending(text) {
     text: text,
   };
   taskArray.push(taskObj);
+  console.log(taskObj);
+
   saveTasks();
 }
 
@@ -112,7 +122,7 @@ function loadFinished() {
   if (loadedFinished !== null) {
     const parsedFinished = JSON.parse(loadedFinished);
     parsedFinished.forEach(function (task) {
-      paintFinished(task.text);
+      paintFinished(task.text, task.id);
     });
   }
 }
