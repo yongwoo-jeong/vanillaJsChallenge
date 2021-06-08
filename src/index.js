@@ -1,10 +1,11 @@
 const tasksForm = document.querySelector(".tasksForm"),
   tasksInput = tasksForm.querySelector("input"),
-  taskList = document.querySelector(".pending"),
-  doneList = document.querySelector(".finished");
+  pendingList = document.querySelector(".pending"),
+  finishedList = document.querySelector(".finished");
 
 const PENDING_LS = "PENDING";
 const FINISHED_LS = "FINISHED";
+const SPAN_LS = "span";
 
 let taskArray = [];
 let finishedArray = [];
@@ -12,7 +13,7 @@ let finishedArray = [];
 function deleteTask(event) {
   const btn = event.target;
   const li = btn.parentNode;
-  taskList.removeChild(li);
+  pendingList.removeChild(li);
   const cleanTaskArray = taskArray.filter(function (task) {
     return task.id !== parseInt(li.id);
   });
@@ -20,27 +21,39 @@ function deleteTask(event) {
   saveTasks();
 }
 
-function paintFinished(bringText) {
+function deleteTaskV2(event) {
+  const btn = event.target;
+  const li = btn.parentNode;
+  finishedList.removeChild(li);
+  const cleanDoneArray = finishedArray.filter(function (task) {
+    return task.id !== parseInt(li.id);
+  });
+  finishedArray = cleanDoneArray;
+  saveDones();
+}
+
+function paintFinished(bringText, getId) {
   const li = document.createElement("li");
   const delBtn = document.createElement("button");
   delBtn.innerText = "✖";
-  delBtn.addEventListener("click", deleteTask);
+  delBtn.addEventListener("click", deleteTaskV2);
   const doneBtn = document.createElement("button");
   doneBtn.innerHTML = "⏮";
   // doneBtn.addEventListener("click", doneTask);
+  const newId = getId;
   const span = document.createElement("span");
-  const newId = finishedArray.length + 1;
-
-  li.appendChild(bringText);
+  span.innerText = bringText;
+  li.appendChild(span);
   li.appendChild(delBtn);
   li.appendChild(doneBtn);
   li.id = newId;
-  doneList.appendChild(li);
+  finishedList.appendChild(li);
   const finishObj = {
-    text: bringText,
     id: newId,
+    text: bringText,
   };
   finishedArray.push(finishObj);
+  console.log(finishObj);
   saveDones();
 }
 
@@ -48,7 +61,9 @@ function doneTask(event) {
   const btn = event.target;
   const nodeLi = btn.parentNode;
   const text = nodeLi.firstChild;
-  paintFinished(text);
+  const textString = text.innerText;
+  const getId = nodeLi.id;
+  paintFinished(textString, getId);
   deleteTask(event);
 }
 
@@ -59,7 +74,7 @@ function saveTasks() {
   localStorage.setItem(PENDING_LS, JSON.stringify(taskArray));
 }
 
-function paintTasks(text) {
+function paintPending(text) {
   const li = document.createElement("li");
   const delBtn = document.createElement("button");
   delBtn.innerText = "✖";
@@ -68,16 +83,18 @@ function paintTasks(text) {
   doneBtn.innerText = "✔";
   doneBtn.addEventListener("click", doneTask);
   const span = document.createElement("span");
+
+  // const newId = Math.floor(Math.random() * 10000000);
   const newId = taskArray.length + 1;
   span.innerText = text;
   li.appendChild(span);
   li.appendChild(delBtn);
   li.appendChild(doneBtn);
   li.id = newId;
-  taskList.appendChild(li);
+  pendingList.appendChild(li);
   const taskObj = {
-    text: text,
     id: newId,
+    text: text,
   };
   taskArray.push(taskObj);
   saveTasks();
@@ -86,23 +103,34 @@ function paintTasks(text) {
 function handleSubmit(event) {
   event.preventDefault();
   const currentValue = tasksInput.value;
-  paintTasks(currentValue);
+  paintPending(currentValue);
   tasksInput.value = "";
 }
 
-function loadTasks() {
-  const loadedTasks = localStorage.getItem(PENDING_LS);
-  if (loadedTasks !== null) {
-    const parsedTasks = JSON.parse(loadedTasks);
-    parsedTasks.forEach(function (task) {
-      paintTasks(task.text);
+function loadFinished() {
+  const loadedFinished = localStorage.getItem(FINISHED_LS);
+  if (loadedFinished !== null) {
+    const parsedFinished = JSON.parse(loadedFinished);
+    parsedFinished.forEach(function (task) {
+      paintFinished(task.text);
+    });
+  }
+}
+
+function loadPending() {
+  const loadedPending = localStorage.getItem(PENDING_LS);
+  if (loadedPending !== null) {
+    const parsedpending = JSON.parse(loadedPending);
+    parsedpending.forEach(function (task) {
+      paintPending(task.text);
     });
   } else {
   }
 }
 
 function init() {
-  loadTasks();
+  loadPending();
+  loadFinished();
   tasksForm.addEventListener("submit", handleSubmit);
 }
 
