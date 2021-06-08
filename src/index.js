@@ -32,41 +32,6 @@ function deleteTaskV2(event) {
   saveDones();
 }
 
-function beforeTask(event) {
-  const btn = event.target;
-  const nodeLi = btn.parentNode;
-  const text = nodeLi.firstChild;
-  const textString = text.innerText;
-  const getId = nodeLi.id;
-  paintPending(textString, getId);
-  deleteTaskV2(event);
-}
-
-function paintFinished(bringText, getId) {
-  const li = document.createElement("li");
-  const delBtn = document.createElement("button");
-  delBtn.innerText = "✖";
-  delBtn.addEventListener("click", deleteTaskV2);
-  const doneBtn = document.createElement("button");
-  doneBtn.innerHTML = "⏮";
-  doneBtn.addEventListener("click", beforeTask);
-  const newId = Number(getId);
-  const span = document.createElement("span");
-  span.innerText = bringText;
-  li.appendChild(span);
-  li.appendChild(delBtn);
-  li.appendChild(doneBtn);
-  li.id = newId;
-  finishedList.appendChild(li);
-  const finishObj = {
-    id: newId,
-    text: bringText,
-  };
-  finishedArray.push(finishObj);
-  console.log(finishObj);
-  saveDones();
-}
-
 function doneTask(event) {
   const btn = event.target;
   const nodeLi = btn.parentNode;
@@ -75,6 +40,16 @@ function doneTask(event) {
   const getId = nodeLi.id;
   paintFinished(textString, getId);
   deleteTask(event);
+}
+
+function beforeTask(event) {
+  const btn = event.target;
+  const nodeLi = btn.parentNode;
+  const text = nodeLi.firstChild;
+  const textString = text.innerText;
+  const getId = nodeLi.id;
+  paintPending(textString, getId);
+  deleteTaskV2(event);
 }
 
 function saveDones() {
@@ -108,6 +83,31 @@ function paintPending(text) {
   console.log(taskObj);
 
   saveTasks();
+}
+
+function paintFinished(bringText, getId) {
+  const li = document.createElement("li");
+  const delBtn = document.createElement("button");
+  delBtn.innerText = "✖";
+  delBtn.addEventListener("click", deleteTaskV2);
+  const doneBtn = document.createElement("button");
+  doneBtn.innerHTML = "⏮";
+  doneBtn.addEventListener("click", beforeTask);
+  const newId = Number(getId);
+  const span = document.createElement("span");
+  span.innerText = bringText;
+  li.appendChild(span);
+  li.appendChild(delBtn);
+  li.appendChild(doneBtn);
+  li.id = newId;
+  finishedList.appendChild(li);
+  const finishObj = {
+    id: newId,
+    text: bringText,
+  };
+  finishedArray.push(finishObj);
+  console.log(finishObj);
+  saveDones();
 }
 
 function handleSubmit(event) {
